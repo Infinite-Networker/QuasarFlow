@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuasarFlow — UI Showcase</title>
+
+  <!-- ── Google Fonts (closest matches to QuasarFlow font families) ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Orbitron:wght@400..900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       COSMIC DESIGN TOKENS  (mirrors Cosmic Typography & Fonts.js)
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      /* Font Families */
+      --qf-font-sans:    'Space Grotesk', sans-serif;        /* QuasarSans      */
+      --qf-font-serif:   'Exo 2', serif;                     /* NebulaSerif     */
+      --qf-font-mono:    'Space Mono', monospace;            /* WarpMono        */
+      --qf-font-display: 'Orbitron', sans-serif;             /* PulsarDisplay   */
+
+      /* Type Scale */
+      --qf-size-xs:   10px;
+      --qf-size-sm:   12px;
+      --qf-size-base: 16px;
+      --qf-size-md:   18px;
+      --qf-size-lg:   24px;
+      --qf-size-xl:   32px;
+      --qf-size-xxl:  48px;
+      --qf-size-hero: 72px;
+
+      /* Font Weights */
+      --qf-w-thin:      100;
+      --qf-w-light:     300;
+      --qf-w-regular:   400;
+      --qf-w-medium:    500;
+      --qf-w-semibold:  600;
+      --qf-w-bold:      700;
+      --qf-w-extrabold: 800;
+      --qf-w-black:     900;
+
+      /* Cosmic Color Palette */
+      --qf-bg:          #05080f;
+      --qf-surface:     #0d1524;
+      --qf-card:        #111c2e;
+      --qf-border:      #1e2d45;
+
+      --qf-primary:     #E8F4FF;
+      --qf-secondary:   #A0B4CC;
+      --qf-accent:      #7DF9FF;
+      --qf-nova:        #FF7F00;
+      --qf-pulsar:      #BF5FFF;
+      --qf-danger:      #FF3366;
+      --qf-success:     #39FF14;
+      --qf-muted:       #4A5568;
+
+      /* Glow colors */
+      --glow-nebula:    rgba(125, 249, 255, 0.5);
+      --glow-nova:      rgba(255, 127,   0, 0.55);
+      --glow-pulsar:    rgba(191,  95, 255, 0.55);
+      --glow-void:      rgba(255,  51, 102, 0.5);
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--qf-bg);
+      color: var(--qf-primary);
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-base);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield Background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 50%, rgba(255,127,0,0.02) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Stars (CSS-only) ── */
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .star {
+      position: absolute; border-radius: 50%;
+      background: #fff; opacity: 0;
+      animation: twinkle var(--dur, 4s) infinite var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%       { opacity: var(--bright, 0.7); transform: scale(1); }
+    }
+
+    /* ── Layout ── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--qf-border);
+      padding: 16px 0;
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo {
+      font-family: var(--qf-font-display);
+      font-size: var(--qf-size-lg);
+      font-weight: var(--qf-w-bold);
+      color: var(--qf-accent);
+      letter-spacing: 0.1em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--qf-nova); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--qf-secondary);
+      text-decoration: none;
+      font-size: var(--qf-size-sm);
+      font-weight: var(--qf-w-medium);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--qf-accent); }
+
+    /* ── Section Wrapper ── */
+    section { padding: 80px 0; }
+    .section-label {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-xs);
+      font-weight: var(--qf-w-semibold);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--qf-pulsar);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--qf-font-display);
+      font-size: var(--qf-size-xl);
+      font-weight: var(--qf-w-bold);
+      color: var(--qf-primary);
+      margin-bottom: 8px;
+    }
+    .section-subtitle {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-md);
+      color: var(--qf-secondary);
+      margin-bottom: 48px;
+      max-width: 640px;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--qf-border), transparent);
+      margin: 0 0 0 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 120px 0 80px;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--qf-accent), var(--qf-pulsar), transparent);
+    }
+    .hero-eyebrow {
+      font-family: var(--qf-font-mono);
+      font-size: var(--qf-size-sm);
+      color: var(--qf-success);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 40px; height: 1px;
+      background: var(--qf-success);
+    }
+    .hero-title {
+      font-family: var(--qf-font-display);
+      font-size: clamp(48px, 8vw, var(--qf-size-hero));
+      font-weight: var(--qf-w-black);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title .accent  { color: var(--qf-accent); }
+    .hero-title .nova    { color: var(--qf-nova);   }
+    .hero-title .pulsar  { color: var(--qf-pulsar); }
+
+    .hero-desc {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-md);
+      color: var(--qf-secondary);
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+    .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* Floating orb behind hero */
+    .hero-orb {
+      position: absolute; right: -200px; top: 50%;
+      transform: translateY(-50%);
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%,
+        rgba(125,249,255,0.08) 0%,
+        rgba(191,95,255,0.06) 40%,
+        transparent 70%);
+      filter: blur(2px);
+      animation: orb-drift 12s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes orb-drift {
+      from { transform: translateY(-50%) scale(1);   }
+      to   { transform: translateY(-55%) scale(1.05);}
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       BUTTON COMPONENTS
+    ═══════════════════════════════════════════════════════ */
+
+    /* ── Base button reset ── */
+    .qf-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: none; outline: none; cursor: pointer;
+      font-family: var(--qf-font-sans);
+      font-weight: var(--qf-w-semibold);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .qf-btn::after {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.2s;
+      background: rgba(255,255,255,0.08);
+    }
+    .qf-btn:hover::after { opacity: 1; }
+    .qf-btn:active { transform: scale(0.97); }
+    .qf-btn:disabled {
+      opacity: 0.4; cursor: not-allowed; pointer-events: none;
+    }
+
+    /* Sizes */
+    .qf-btn-sm  { padding: 8px  16px; font-size: 12px; letter-spacing: 0.06em; }
+    .qf-btn-md  { padding: 12px 24px; font-size: 14px; letter-spacing: 0.05em; }
+    .qf-btn-lg  { padding: 16px 32px; font-size: 16px; letter-spacing: 0.06em; }
+    .qf-btn-xl  { padding: 20px 40px; font-size: 18px; letter-spacing: 0.07em; }
+
+    /* Variants */
+    .qf-btn-primary {
+      background: linear-gradient(135deg, #0ea5e9 0%, var(--qf-accent) 100%);
+      color: #05080f;
+      font-weight: var(--qf-w-bold);
+    }
+    .qf-btn-secondary {
+      background: transparent;
+      color: var(--qf-primary);
+      border: 1.5px solid var(--qf-border);
+    }
+    .qf-btn-nova {
+      background: linear-gradient(135deg, #ff6600 0%, var(--qf-nova) 100%);
+      color: #fff;
+      font-weight: var(--qf-w-bold);
+    }
+    .qf-btn-danger {
+      background: linear-gradient(135deg, #c2003c 0%, var(--qf-danger) 100%);
+      color: #fff;
+      font-weight: var(--qf-w-bold);
+    }
+    .qf-btn-ghost {
+      background: rgba(125,249,255,0.05);
+      color: var(--qf-accent);
+      border: 1.5px solid rgba(125,249,255,0.25);
+    }
+    .qf-btn-pulsar {
+      background: linear-gradient(135deg, #8b00ff 0%, var(--qf-pulsar) 100%);
+      color: #fff;
+      font-weight: var(--qf-w-bold);
+    }
+
+    /* Glows */
+    .qf-glow-nebula:hover  { box-shadow: 0 0 20px 4px var(--glow-nebula); }
+    .qf-glow-nova:hover    { box-shadow: 0 0 20px 4px var(--glow-nova);   }
+    .qf-glow-pulsar:hover  { box-shadow: 0 0 20px 4px var(--glow-pulsar); }
+    .qf-glow-void:hover    { box-shadow: 0 0 20px 4px var(--glow-void);   }
+
+    /* Pulsar animation */
+    @keyframes pulsar-ring {
+      0%   { box-shadow: 0 0 0 0px var(--glow-pulsar); }
+      100% { box-shadow: 0 0 0 14px transparent; }
+    }
+    .qf-btn-secondary { animation: pulsar-ring 1.8s ease-out infinite; }
+
+    /* Loading */
+    .qf-loading { pointer-events: none; }
+    .qf-spinner { display: inline-block; animation: spin 0.9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Icon Button */
+    .qf-icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; outline: none; cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.25s;
+      font-size: 18px;
+    }
+    .qf-icon-btn-sm { width: 32px; height: 32px; font-size: 14px; }
+    .qf-icon-btn-md { width: 44px; height: 44px; font-size: 18px; }
+    .qf-icon-btn-lg { width: 56px; height: 56px; font-size: 24px; }
+
+    /* Button Group */
+    .qf-btn-group { display: flex; }
+    .qf-group-horizontal { flex-direction: row; flex-wrap: wrap; }
+    .qf-group-vertical   { flex-direction: column; width: fit-content; }
+    .qf-gap-sm  { gap: 8px; }
+    .qf-gap-md  { gap: 12px; }
+    .qf-gap-lg  { gap: 20px; }
+
+    /* Demo Grid */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .demo-card {
+      background: var(--qf-card);
+      border: 1px solid var(--qf-border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .demo-card:hover {
+      border-color: rgba(125,249,255,0.25);
+      transform: translateY(-3px);
+    }
+    .demo-card-title {
+      font-family: var(--qf-font-mono);
+      font-size: var(--qf-size-xs);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--qf-muted);
+      margin-bottom: 20px;
+    }
+    .demo-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+    /* ═══════════════════════════════════════════════════════
+       TYPOGRAPHY SHOWCASE
+    ═══════════════════════════════════════════════════════ */
+    .type-specimen { margin-bottom: 32px; }
+    .type-row {
+      display: flex; align-items: baseline;
+      gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--qf-border);
+    }
+    .type-meta {
+      min-width: 180px; flex-shrink: 0;
+      font-family: var(--qf-font-mono);
+      font-size: 11px;
+      color: var(--qf-muted);
+      line-height: 1.5;
+    }
+    .type-meta strong { display: block; color: var(--qf-secondary); }
+
+    /* Individual type styles (mirrors Cosmic Typography & Fonts.js) */
+    .qf-hero {
+      font-family: var(--qf-font-display);
+      font-size: clamp(36px, 6vw, var(--qf-size-hero));
+      font-weight: var(--qf-w-black);
+      line-height: 1.05;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      color: var(--qf-accent);
+    }
+    .qf-h1 {
+      font-family: var(--qf-font-display);
+      font-size: var(--qf-size-xxl);
+      font-weight: var(--qf-w-black);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--qf-primary);
+    }
+    .qf-h2 {
+      font-family: var(--qf-font-display);
+      font-size: var(--qf-size-xl);
+      font-weight: var(--qf-w-bold);
+      line-height: 1.25;
+      letter-spacing: 0.05em;
+      color: var(--qf-primary);
+    }
+    .qf-h3 {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-lg);
+      font-weight: var(--qf-w-semibold);
+      line-height: 1.375;
+      color: var(--qf-pulsar);
+    }
+    .qf-body {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-base);
+      font-weight: var(--qf-w-regular);
+      line-height: 1.6;
+      color: var(--qf-primary);
+    }
+    .qf-caption {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-sm);
+      font-weight: var(--qf-w-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--qf-secondary);
+    }
+    .qf-code {
+      font-family: var(--qf-font-mono);
+      font-size: var(--qf-size-base);
+      font-weight: var(--qf-w-medium);
+      line-height: 2.0;
+      color: var(--qf-success);
+      background: rgba(57,255,20,0.06);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .qf-quote {
+      font-family: var(--qf-font-serif);
+      font-size: var(--qf-size-md);
+      font-style: italic;
+      font-weight: var(--qf-w-bold);
+      line-height: 1.625;
+      letter-spacing: 0.03em;
+      color: var(--qf-nova);
+      border-left: 3px solid var(--qf-nova);
+      padding-left: 20px;
+    }
+    .qf-truncated {
+      font-family: var(--qf-font-sans);
+      font-size: var(--qf-size-base);
+      color: var(--qf-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    /* Font family badges */
+    .font-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-family: var(--qf-font-mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--qf-border);
+      color: var(--qf-secondary);
+      margin-bottom: 16px;
+    }
+    .font-families-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 48px;
+    }
+    .font-card {
+      background: var(--qf-card);
+      border: 1px solid var(--qf-border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: border-color 0.25s;
+    }
+    .font-card:hover { border-color: rgba(125,249,255,0.3); }
+    .font-card-name {
+      font-size: 11px;
+      font-family: var(--qf-font-mono);
+      color: var(--qf-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .font-card-sample { line-height: 1.3; }
+    .font-card-meta {
+      font-family: var(--qf-font-mono);
+      font-size: 10px;
+      color: var(--qf-muted);
+      margin-top: 10px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CODE BLOCK
+    ═══════════════════════════════════════════════════════ */
+    .code-block {
+      background: #060d18;
+      border: 1px solid var(--qf-border);
+      border-radius: 10px;
+      padding: 24px;
+      overflow-x: auto;
+      font-family: var(--qf-font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--qf-primary);
+    }
+    .code-block .kw  { color: var(--qf-pulsar); }
+    .code-block .fn  { color: var(--qf-accent); }
+    .code-block .str { color: var(--qf-nova);   }
+    .code-block .cmt { color: var(--qf-muted); font-style: italic; }
+    .code-block .num { color: var(--qf-success);}
+    .code-block .punc{ color: var(--qf-secondary); }
+
+    /* Code file header */
+    .code-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      background: var(--qf-surface);
+      border: 1px solid var(--qf-border);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      font-family: var(--qf-font-mono);
+      font-size: 12px;
+      color: var(--qf-secondary);
+    }
+    .code-header .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .code-block.with-header { border-radius: 0 0 10px 10px; }
+
+    /* ═══════════════════════════════════════════════════════
+       COLOR SWATCHES
+    ═══════════════════════════════════════════════════════ */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .swatch {
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .swatch-color { height: 64px; }
+    .swatch-info {
+      background: var(--qf-card);
+      padding: 8px 10px;
+    }
+    .swatch-name {
+      font-family: var(--qf-font-mono);
+      font-size: 10px;
+      color: var(--qf-secondary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .swatch-hex {
+      font-family: var(--qf-font-mono);
+      font-size: 11px;
+      color: var(--qf-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════════ */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--qf-border);
+      padding: 40px 0;
+    }
+    footer .container {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-brand {
+      font-family: var(--qf-font-display);
+      font-size: var(--qf-size-md);
+      font-weight: var(--qf-w-bold);
+      color: var(--qf-accent);
+      letter-spacing: 0.1em;
+    }
+    .footer-text {
+      font-size: 13px;
+      color: var(--qf-muted);
+      font-family: var(--qf-font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Starfield ── -->
+  <div class="stars" id="stars"></div>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <nav>
+    <div class="container">
+      <a href="#hero" class="nav-logo">QUASAR<span>FLOW</span></a>
+      <ul class="nav-links">
+        <li><a href="#buttons">Buttons</a></li>
+        <li><a href="#typography">Typography</a></li>
+        <li><a href="#fonts">Fonts</a></li>
+        <li><a href="#code">Code</a></li>
+        <li><a href="https://github.com/Infinite-Networker/QuasarFlow" target="_blank">GitHub ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-orb"></div>
+    <div class="container">
+      <p class="hero-eyebrow">🌌 Quantum-Inspired Language</p>
+      <h1 class="hero-title">
+        <span class="accent">Quasar</span><span class="nova">Flow</span><br/>
+        <span class="pulsar">UI</span> System
+      </h1>
+      <p class="hero-desc">
+        A cosmic design system for the QuasarFlow programming language.
+        Buttons that glow like pulsars. Typography that resonates across galaxies.
+        Components entangled with the universe. ⚛️
+      </p>
+      <div class="hero-cta">
+        <a href="#buttons" class="qf-btn qf-btn-nova qf-btn-lg qf-glow-nova">🌟 Explore Components</a>
+        <a href="https://github.com/Infinite-Networker/QuasarFlow" target="_blank"
+           class="qf-btn qf-btn-ghost qf-btn-lg qf-glow-nebula">⚛️ View on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       BUTTONS SECTION
+  ═══════════════════════════════════════ -->
+  <section id="buttons">
+    <div class="container">
+      <p class="section-label">UI Components</p>
+      <h2 class="section-title">Quantum Button System</h2>
+      <p class="section-subtitle">
+        Five cosmic button variants — each resonating at a unique quantum frequency.
+        Defined in <code class="qf-code">Quantum Button Components.js</code>.
+      </p>
+
+      <!-- Variant Cards -->
+      <div class="demo-grid">
+
+        <!-- Primary -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Primary — starlight beam</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-primary qf-btn-sm qf-glow-nebula">⚛️ SM</button>
+            <button class="qf-btn qf-btn-primary qf-btn-md qf-glow-nebula">⚛️ Launch</button>
+            <button class="qf-btn qf-btn-primary qf-btn-lg qf-glow-nebula">⚛️ Warp Drive</button>
+          </div>
+        </div>
+
+        <!-- Nova -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Nova — blazing energy CTA</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-nova qf-btn-sm qf-glow-nova">🌟 Ignite</button>
+            <button class="qf-btn qf-btn-nova qf-btn-md qf-glow-nova">🌟 Ignite Stars</button>
+            <button class="qf-btn qf-btn-nova qf-btn-lg qf-glow-nova">🌟 Supernova</button>
+          </div>
+        </div>
+
+        <!-- Pulsar -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Pulsar — rapid-pulse secondary</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-pulsar qf-btn-sm qf-glow-pulsar">⚡ Pulse</button>
+            <button class="qf-btn qf-btn-pulsar qf-btn-md qf-glow-pulsar">⚡ Pulse Signal</button>
+            <button class="qf-btn qf-btn-pulsar qf-btn-lg qf-glow-pulsar">⚡ Broadcast</button>
+          </div>
+        </div>
+
+        <!-- Danger / Event Horizon -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Event Horizon — danger / destructive</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-danger qf-btn-sm qf-glow-void">🕳️ Collapse</button>
+            <button class="qf-btn qf-btn-danger qf-btn-md qf-glow-void">🕳️ Destroy</button>
+            <button class="qf-btn qf-btn-danger qf-btn-lg qf-glow-void">🕳️ Singularity</button>
+          </div>
+        </div>
+
+        <!-- Ghost -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Ghost — transparent cosmic overlay</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-ghost qf-btn-sm qf-glow-nebula">👻 Pass</button>
+            <button class="qf-btn qf-btn-ghost qf-btn-md qf-glow-nebula">👻 Warp Through</button>
+            <button class="qf-btn qf-btn-ghost qf-btn-lg qf-glow-nebula">👻 Phase Shift</button>
+          </div>
+        </div>
+
+        <!-- Secondary (Pulsar ring animation) -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Secondary — pulsar ring animation</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-secondary qf-btn-sm">🔵 Orbit</button>
+            <button class="qf-btn qf-btn-secondary qf-btn-md">🔵 Secondary</button>
+            <button class="qf-btn qf-btn-secondary qf-btn-lg">🔵 Resonance</button>
+          </div>
+        </div>
+
+        <!-- States -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Special states</p>
+          <div class="demo-row">
+            <!-- Loading -->
+            <button class="qf-btn qf-btn-primary qf-btn-md qf-loading" disabled>
+              <span class="qf-spinner">🌀</span> Calculating Warp…
+            </button>
+            <!-- Disabled -->
+            <button class="qf-btn qf-btn-primary qf-btn-md" disabled>💀 Collapsed Star</button>
+          </div>
+        </div>
+
+        <!-- Icon Buttons -->
+        <div class="demo-card">
+          <p class="demo-card-title">// Icon buttons</p>
+          <div class="demo-row">
+            <button class="qf-btn qf-btn-primary qf-icon-btn qf-icon-btn-sm qf-glow-nebula" title="Quantum Entangle">⚛️</button>
+            <button class="qf-btn qf-btn-nova qf-icon-btn qf-icon-btn-md qf-glow-nova" title="Supernova">🌟</button>
+            <button class="qf-btn qf-btn-pulsar qf-icon-btn qf-icon-btn-md qf-glow-pulsar" title="Pulse">⚡</button>
+            <button class="qf-btn qf-btn-danger qf-icon-btn qf-icon-btn-lg qf-glow-void" title="Event Horizon">🕳️</button>
+            <button class="qf-btn qf-btn-ghost qf-icon-btn qf-icon-btn-md qf-glow-nebula" title="Ghost">👻</button>
+          </div>
+        </div>
+
+        <!-- Button Group -->
+        <div class="demo-card" style="grid-column: 1 / -1;">
+          <p class="demo-card-title">// Button groups — cosmic clusters</p>
+          <div class="demo-row" style="margin-bottom:16px;">
+            <!-- Horizontal group -->
+            <div class="qf-btn-group qf-group-horizontal qf-gap-sm">
+              <button class="qf-btn qf-btn-nova qf-btn-md qf-glow-nova">🌟 Primary</button>
+              <button class="qf-btn qf-btn-pulsar qf-btn-md qf-glow-pulsar">⚡ Secondary</button>
+              <button class="qf-btn qf-btn-ghost qf-btn-md qf-glow-nebula">👻 Cancel</button>
+            </div>
+          </div>
+          <div class="demo-row">
+            <!-- XL hero group -->
+            <div class="qf-btn-group qf-group-horizontal qf-gap-md">
+              <button class="qf-btn qf-btn-primary qf-btn-xl qf-glow-nebula">⚛️ Deploy to Cosmos</button>
+              <button class="qf-btn qf-btn-secondary qf-btn-xl">🔵 Learn More</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /demo-grid -->
+      <div class="divider"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       TYPOGRAPHY SECTION
+  ═══════════════════════════════════════ -->
+  <section id="typography">
+    <div class="container">
+      <p class="section-label">Type System</p>
+      <h2 class="section-title">Cosmic Typography</h2>
+      <p class="section-subtitle">
+        Eight purpose-built text styles that travel at the speed of light.
+        Defined in <code class="qf-code">Cosmic Typography &amp; Fonts.js</code>.
+      </p>
+
+      <div class="type-specimen">
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Hero</strong>
+            Orbitron / 900<br/>72px · tight<br/>UPPERCASE
+          </div>
+          <span class="qf-hero">QuasarFlow</span>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Heading H1</strong>
+            Orbitron / 900<br/>48px · -0.03em
+          </div>
+          <span class="qf-h1">Quantum Warp</span>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Heading H2</strong>
+            Orbitron / 700<br/>32px · +0.05em
+          </div>
+          <span class="qf-h2">Neural Resonance</span>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Sub-Heading H3</strong>
+            Space Grotesk / 600<br/>24px · pulsar violet
+          </div>
+          <span class="qf-h3">Event Horizon Scopes</span>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Body</strong>
+            Space Grotesk / 400<br/>16px · 1.6 leading
+          </div>
+          <p class="qf-body" style="max-width:560px;">
+            QuasarFlow is a quantum-inspired programming language where code resonates with
+            distant quasars. Features quantum-warp constructs, neural resonance functions,
+            event horizon scopes, and stellar autocorrect.
+          </p>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Caption</strong>
+            Space Grotesk / 300<br/>12px · +0.1em · CAPS
+          </div>
+          <span class="qf-caption">v1.0.0 — Cosmic Edition · Build 2026</span>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Code</strong>
+            Space Mono / 500<br/>16px · 2.0 leading
+          </div>
+          <code class="qf-code">let ptr = entangle_memory("cosmic_sector_42");</code>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Quote</strong>
+            Exo 2 italic / 700<br/>18px · nova orange
+          </div>
+          <blockquote class="qf-quote">
+            The cosmos is not silent — it speaks in code. 🌌
+          </blockquote>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <strong>Truncated</strong>
+            Space Grotesk / 400<br/>16px · muted · ellipsis
+          </div>
+          <p class="qf-truncated">
+            This text travels so far it collapses at the event horizon of your viewport…
+          </p>
+        </div>
+
+      </div><!-- /type-specimen -->
+      <div class="divider"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FONTS SECTION
+  ═══════════════════════════════════════ -->
+  <section id="fonts">
+    <div class="container">
+      <p class="section-label">Font Families</p>
+      <h2 class="section-title">Cosmic Typefaces</h2>
+      <p class="section-subtitle">
+        Five quantum-calibrated font families for every layer of the interface.
+      </p>
+
+      <div class="font-families-grid">
+
+        <div class="font-card">
+          <p class="font-card-name">QuasarSans (Space Grotesk)</p>
+          <span class="font-badge">sans-serif</span>
+          <p class="font-card-sample" style="font-family:var(--qf-font-sans);font-size:28px;font-weight:600;color:var(--qf-primary);">
+            Aa Bb Cc 0-9
+          </p>
+          <p class="font-card-sample" style="font-family:var(--qf-font-sans);font-size:14px;color:var(--qf-secondary);">
+            Body · Labels · UI
+          </p>
+          <p class="font-card-meta">weights: 300 400 500 600 700</p>
+        </div>
+
+        <div class="font-card">
+          <p class="font-card-name">NebulaSerif (Exo 2)</p>
+          <span class="font-badge">serif</span>
+          <p class="font-card-sample" style="font-family:var(--qf-font-serif);font-size:28px;font-weight:600;color:var(--qf-primary);">
+            Aa Bb Cc 0-9
+          </p>
+          <p class="font-card-sample" style="font-family:var(--qf-font-serif);font-size:14px;color:var(--qf-secondary);">
+            Editorial · Quotes · Callouts
+          </p>
+          <p class="font-card-meta">weights: 100–900 · italic</p>
+        </div>
+
+        <div class="font-card">
+          <p class="font-card-name">WarpMono (Space Mono)</p>
+          <span class="font-badge">monospace</span>
+          <p class="font-card-sample" style="font-family:var(--qf-font-mono);font-size:24px;font-weight:700;color:var(--qf-success);">
+            Aa Bb 0-9 {}
+          </p>
+          <p class="font-card-sample" style="font-family:var(--qf-font-mono);font-size:13px;color:var(--qf-secondary);">
+            Code · Terminal · Labels
+          </p>
+          <p class="font-card-meta">weights: 400 · 700</p>
+        </div>
+
+        <div class="font-card">
+          <p class="font-card-name">PulsarDisplay (Orbitron)</p>
+          <span class="font-badge">display</span>
+          <p class="font-card-sample" style="font-family:var(--qf-font-display);font-size:26px;font-weight:900;color:var(--qf-accent);">
+            Aa Bb 01
+          </p>
+          <p class="font-card-sample" style="font-family:var(--qf-font-display);font-size:13px;color:var(--qf-secondary);">
+            Heroes · Headings · Logos
+          </p>
+          <p class="font-card-meta">weights: 400–900</p>
+        </div>
+
+        <div class="font-card">
+          <p class="font-card-name">EventHorizonItalic (Exo 2 Italic)</p>
+          <span class="font-badge">cosmic · italic</span>
+          <p class="font-card-sample" style="font-family:var(--qf-font-serif);font-size:24px;font-weight:700;font-style:italic;color:var(--qf-nova);">
+            Aa Bb Cc Zz
+          </p>
+          <p class="font-card-sample" style="font-family:var(--qf-font-serif);font-size:13px;color:var(--qf-secondary);">
+            Quotes · Drama · Callouts
+          </p>
+          <p class="font-card-meta">weight: 700 · italic</p>
+        </div>
+
+      </div><!-- /font-families-grid -->
+
+      <!-- Color Swatches -->
+      <p class="section-label" style="margin-top:0;">Text Colors</p>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#E8F4FF;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Primary</p>
+            <p class="swatch-hex">#E8F4FF</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#A0B4CC;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Secondary</p>
+            <p class="swatch-hex">#A0B4CC</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#7DF9FF;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Accent</p>
+            <p class="swatch-hex">#7DF9FF</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#FF7F00;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Nova</p>
+            <p class="swatch-hex">#FF7F00</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#BF5FFF;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Pulsar</p>
+            <p class="swatch-hex">#BF5FFF</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#FF3366;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Danger</p>
+            <p class="swatch-hex">#FF3366</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#39FF14;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Success</p>
+            <p class="swatch-hex">#39FF14</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#4A5568;"></div>
+          <div class="swatch-info">
+            <p class="swatch-name">Muted</p>
+            <p class="swatch-hex">#4A5568</p>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CODE SECTION
+  ═══════════════════════════════════════ -->
+  <section id="code">
+    <div class="container">
+      <p class="section-label">QuasarFlow Code</p>
+      <h2 class="section-title">Button Component Usage</h2>
+      <p class="section-subtitle">
+        Drop these snippets into your QuasarFlow project to summon buttons from the cosmos.
+      </p>
+
+      <div class="code-header">
+        <span class="dot" style="background:#FF5F57;"></span>
+        <span class="dot" style="background:#FEBC2E;"></span>
+        <span class="dot" style="background:#28C840;"></span>
+        &nbsp; Quantum Button Components.js
+      </div>
+      <div class="code-block with-header">
+<span class="cmt">// ── Create a Nova CTA button ──────────────────────────</span>
+<span class="kw">let</span> btn = <span class="fn">NovaButton</span>(<span class="str">"Ignite the Stars"</span>, <span class="str">"lg"</span>);
+<span class="fn">print</span>(btn);
+
+<span class="cmt">// ── Event Horizon (destructive) button ────────────────</span>
+<span class="kw">let</span> dangerBtn = <span class="fn">EventHorizonButton</span>(<span class="str">"Collapse Universe"</span>, <span class="str">"md"</span>);
+<span class="fn">print</span>(dangerBtn);
+
+<span class="cmt">// ── Pulsar animated button ─────────────────────────────</span>
+<span class="kw">let</span> pulseBtn = <span class="fn">PulsarButton</span>(<span class="str">"Pulse Signal"</span>, <span class="str">"sm"</span>);
+<span class="fn">print</span>(pulseBtn);
+
+<span class="cmt">// ── Button Group cluster ───────────────────────────────</span>
+<span class="kw">let</span> cluster = <span class="punc">[</span>
+    <span class="fn">NovaButton</span>(<span class="str">"Primary"</span>, <span class="str">"md"</span>)<span class="punc">,</span>
+    <span class="fn">PulsarButton</span>(<span class="str">"Secondary"</span>, <span class="str">"md"</span>)<span class="punc">,</span>
+    <span class="fn">GhostButton</span>(<span class="str">"Cancel"</span>, <span class="str">"md"</span>)
+<span class="punc">];</span>
+<span class="kw">let</span> group = <span class="fn">ButtonGroup</span>();
+group.orientation = <span class="str">"horizontal"</span>;
+<span class="fn">print</span>(<span class="fn">createButtonGroup</span>(cluster, group));
+      </div>
+
+      <br/>
+
+      <div class="code-header">
+        <span class="dot" style="background:#FF5F57;"></span>
+        <span class="dot" style="background:#FEBC2E;"></span>
+        <span class="dot" style="background:#28C840;"></span>
+        &nbsp; Cosmic Typography &amp; Fonts.js
+      </div>
+      <div class="code-block with-header">
+<span class="cmt">// ── Load fonts into the quantum registry ──────────────</span>
+<span class="fn">loadFont</span>(QuasarSans);
+<span class="fn">loadFont</span>(PulsarDisplay);
+<span class="fn">loadFont</span>(WarpMono);
+
+<span class="cmt">// ── Render a supernova hero headline ──────────────────</span>
+<span class="fn">print</span>(<span class="fn">HeroText</span>(<span class="str">"QuasarFlow"</span>));
+
+<span class="cmt">// ── Section heading ────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="fn">HeadingText</span>(<span class="str">"Quantum-Warp Constructs"</span>));
+
+<span class="cmt">// ── Body paragraph ─────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="fn">BodyText</span>(<span class="str">"Where code resonates with distant quasars."</span>));
+
+<span class="cmt">// ── WarpMono code snippet ──────────────────────────────</span>
+<span class="fn">print</span>(<span class="fn">CodeText</span>(<span class="str">"let ptr = entangle_memory(\"cosmic_sector_42\");"</span>));
+
+<span class="cmt">// ── Cosmic quote callout ───────────────────────────────</span>
+<span class="fn">print</span>(<span class="fn">QuoteText</span>(<span class="str">"The cosmos is not silent — it speaks in code. 🌌"</span>));
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <span class="footer-brand">⚛️ QUASARFLOW</span>
+      <span class="footer-text">
+        🌌 Quantum-Inspired · MIT License · github.com/Infinite-Networker/QuasarFlow
+      </span>
+    </div>
+  </footer>
+
+  <!-- ── Starfield generator ── -->
+  <script>
+    (function() {
+      const container = document.getElementById('stars');
+      const count = 120;
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        s.style.cssText = [
+          `width:${size}px`, `height:${size}px`,
+          `top:${Math.random()*100}%`, `left:${Math.random()*100}%`,
+          `--dur:${(Math.random()*5+2).toFixed(1)}s`,
+          `--delay:${(Math.random()*6).toFixed(1)}s`,
+          `--bright:${(Math.random()*0.6+0.3).toFixed(2)}`
+        ].join(';');
+        container.appendChild(s);
+      }
+    })();
+  </script>
+</body>
+</html>
